@@ -6,7 +6,7 @@ import (
 )
 
 func TestParseIni(t *testing.T) {
-	actual, err := parseInI("PHP.ini")
+	actual, err := parse_ini("PHP.ini")
 	if err != nil {
 		t.Error(fmt.Sprintf("Error in parsing: '%v'", err))
 	}

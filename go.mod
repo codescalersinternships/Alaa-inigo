@@ -1,3 +1,3 @@
-module example.com/packages
+module inigo
 
 go 1.13

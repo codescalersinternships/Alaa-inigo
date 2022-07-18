@@ -4,21 +4,46 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"regexp"
+	"strings"
 )
 
-func parseInI(filename string) (map[string]map[string]string, error) {
+type dataStructue struct { //nested maps
+	nested_map map[string]map[string]string
+}
+
+func (ds *dataStructue) loadFromFile(path string) (err error) {
+	content, err := ioutil.ReadFile(path)
+	msg := string(content)
+	if err != nil {
+		panic(err)
+	}
+	ds.nested_map, err = parse_ini(msg)
+	return err
+}
+
+func (ds *dataStructue) loadFromText(txt string) (err error) {
+	if len(txt) != 0 {
+		ds.nested_map, err = parse_ini(txt)
+	} else {
+		panic(err)
+	}
+
+	return err
+
+}
+
+func parse_ini(txt string) (map[string]map[string]string, error) {
 	ini := make(map[string]map[string]string)
 	var head string
 
-	fh, err := os.Open(filename)
-	if err != nil {
-		return ini, fmt.Errorf("Could not open file '%v': %v", filename, err)
-	}
 	sectionHead := regexp.MustCompile(`^\[([^]]*)\]\s*$`)
 	keyValue := regexp.MustCompile(`^(\w*)\s*=\s*(.*?)\s*$`)
-	reader := bufio.NewReader(fh)
+	reader := bufio.NewReader(strings.NewReader(txt))
+
 	for {
 		line, _ := reader.ReadString('\n')
 		result := sectionHead.FindStringSubmatch(line)
@@ -34,40 +59,36 @@ func parseInI(filename string) (map[string]map[string]string, error) {
 			ini[head][key] = value
 			continue
 		}
-
 		if line == "" {
 			break
 		}
 	}
-
+	fmt.Println(ini)
 	return ini, nil
+
 }
 
-func getSections(name string, MAP map[string]map[string]string) (map[string]string, error) {
-	section := MAP[name]
-	if section == nil {
-		return nil, errors.New("No Section with that name")
-	}
+func (ds *dataStructue) getSections() map[string]map[string]string {
+	return ds.nested_map
 
-	return section, nil
 }
 
-func getSectionsName(Map4 map[string]map[string]string) {
-	//section := Map4
-	for sectionName := range Map4 {
+func (ds *dataStructue) getSectionsName() {
+
+	for sectionName := range ds.nested_map {
 		fmt.Println(sectionName)
 	}
 }
 
-func set(name string, key string, value string, MAP2 map[string]map[string]string) map[string]string {
-	section := MAP2[name]
+func (ds *dataStructue) set(name string, key string, value string) map[string]string {
+	section := ds.nested_map[name]
 	section[key] = value
+	fmt.Println(section)
 	return section
-
 }
 
-func getKeys(sectionName string, MAP3 map[string]map[string]string) error {
-	section := MAP3[sectionName]
+func (ds *dataStructue) getKeys(sectionName string) error {
+	section := ds.nested_map[sectionName]
 	if section != nil {
 		for key, value := range section {
 			fmt.Println(key, value)
@@ -81,26 +102,42 @@ func getKeys(sectionName string, MAP3 map[string]map[string]string) error {
 
 }
 
+func (ds *dataStructue) loadToFile() (err error) {
+	file, err := os.Create("output.ini")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data := ""
+	for section, keys := range ds.nested_map {
+		data += "[" + section + "]\n"
+		for key, value := range keys {
+			data += key + " = " + value + "\n"
+		}
+
+	}
+
+	file.WriteString(data)
+	file.Close()
+	return err
+
+}
+
 func main() {
-	var x = map[string]map[string]string{}
-	fmt.Println(parseInI("PHP.ini")) //return all sections with their keys
-	//fmt.Println("\n")
 
-	x, _ = parseInI("PHP.ini")
-	fmt.Println(x)
-	//fmt.Println("\n")
+	ds := dataStructue{}
 
-	fmt.Println(getSections("database", x)) //return specific section with its keys
-	//fmt.Println("\n")
+	ds.loadFromFile("/home/aya/codescalers/parser_ini/PHP.ini")
 
-	getKeys("database", x)
-	//fmt.Println("\n")
+	fmt.Println(ds.getSections())
 
-	fmt.Println(set("database", "port", "500", x)) //update value of key
-	//fmt.Println("\n")
+	ds.getSectionsName()
 
-	getSectionsName(x)
-	//temp map[string]map[string]string
-	//temp = parseIni("PHP.ini")
-	//fmt.Println(getSection("owner", temp))
+	ds.set("owner", "name", "alaa")
+
+	ds.getKeys("database")
+
+	ds.loadToFile()
+
 }

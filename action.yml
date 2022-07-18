@@ -1,8 +1,10 @@
-name : "parser"
-description : "parser for INI files"
+on:
+  push:
+    branches:
+      - master 
 
-runs :
-  using: composite
-  steps: 
-  -run: go run parser.go
-  shell: bash 
+
+jobs:
+  parser:
+    runs-on: ubuntu-20.04.4
+
