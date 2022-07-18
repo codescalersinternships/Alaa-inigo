@@ -15,19 +15,19 @@ type dataStructue struct { //nested maps
 	nested_map map[string]map[string]string
 }
 
-func (ds *dataStructue) loadFromFile(path string) (err error) {
+func (ds *dataStructue) LoadFromFile(path string) (err error) {
 	content, err := ioutil.ReadFile(path)
 	msg := string(content)
 	if err != nil {
 		panic(err)
 	}
-	ds.nested_map, err = parse_ini(msg)
+	ds.nested_map, err = Parse_ini(msg)
 	return err
 }
 
-func (ds *dataStructue) loadFromText(txt string) (err error) {
+func (ds *dataStructue) LoadFromText(txt string) (err error) {
 	if len(txt) != 0 {
-		ds.nested_map, err = parse_ini(txt)
+		ds.nested_map, err = Parse_ini(txt)
 	} else {
 		panic(err)
 	}
@@ -36,7 +36,7 @@ func (ds *dataStructue) loadFromText(txt string) (err error) {
 
 }
 
-func parse_ini(txt string) (map[string]map[string]string, error) {
+func Parse_ini(txt string) (map[string]map[string]string, error) {
 	ini := make(map[string]map[string]string)
 	var head string
 
@@ -68,26 +68,26 @@ func parse_ini(txt string) (map[string]map[string]string, error) {
 
 }
 
-func (ds *dataStructue) getSections() map[string]map[string]string {
+func (ds *dataStructue) GetSections() map[string]map[string]string {
 	return ds.nested_map
 
 }
 
-func (ds *dataStructue) getSectionsName() {
+func (ds *dataStructue) GetSectionsName() {
 
 	for sectionName := range ds.nested_map {
 		fmt.Println(sectionName)
 	}
 }
 
-func (ds *dataStructue) set(name string, key string, value string) map[string]string {
+func (ds *dataStructue) Set(name string, key string, value string) map[string]string {
 	section := ds.nested_map[name]
 	section[key] = value
 	fmt.Println(section)
 	return section
 }
 
-func (ds *dataStructue) getKeys(sectionName string) error {
+func (ds *dataStructue) GetKeys(sectionName string) error {
 	section := ds.nested_map[sectionName]
 	if section != nil {
 		for key, value := range section {
@@ -102,7 +102,7 @@ func (ds *dataStructue) getKeys(sectionName string) error {
 
 }
 
-func (ds *dataStructue) loadToFile() (err error) {
+func (ds *dataStructue) LoadToFile() (err error) {
 	file, err := os.Create("output.ini")
 
 	if err != nil {
@@ -126,18 +126,18 @@ func (ds *dataStructue) loadToFile() (err error) {
 
 func main() {
 
-	ds := dataStructue{}
+	parser := dataStructue{}
 
-	ds.loadFromFile("/home/aya/codescalers/parser_ini/PHP.ini")
+	parser.LoadFromFile("/home/aya/codescalers/parser_ini/PHP.ini")
 
-	fmt.Println(ds.getSections())
+	fmt.Println(parser.GetSections())
 
-	ds.getSectionsName()
+	parser.GetSectionsName()
 
-	ds.set("owner", "name", "alaa")
+	parser.Set("owner", "name", "alaa")
 
-	ds.getKeys("database")
+	parser.GetKeys("database")
 
-	ds.loadToFile()
+	parser.LoadToFile()
 
 }
