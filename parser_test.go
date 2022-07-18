@@ -6,7 +6,27 @@ import (
 )
 
 func TestParseIni(t *testing.T) {
-	actual, err := Parse_ini("PHP.ini")
+	// parser := dataStructue{
+	// 	map[string]map[string]string{
+	// 		"owner": {
+	// 			"name":         "John Doe",
+	// 			"organization": "Acme Widgets Inc.",
+	// 		},
+	// 		"database": {
+	// 			"file":   "payroll.dat",
+	// 			"port":   "143",
+	// 			"server": "129.0.2.62",
+	// 		},
+	// 	},
+	// }
+
+	text := "; last modified 1 April 2001 by John Doe\n" +
+		"[owner]\n" + "name = John Doe\n" + "organization = Acme Widgets Inc.\n" +
+		"\n" + "[database]\n" + "; use IP address in case network name resolution is not working\n" +
+		"server = 192.0.2.62\n" + "port = 143\n" + "file = payroll.dat\n"
+
+	actual, err := Parse_ini(text)
+
 	if err != nil {
 		t.Error(fmt.Sprintf("Error in parsing: '%v'", err))
 	}
@@ -23,46 +43,51 @@ func TestParseIni(t *testing.T) {
 	}
 }
 
-func getSectionsTest(t *testing.T) {
-	nested := map[string]map[string]string{
+func TestGetSections(t *testing.T) {
+	parser := dataStructue{
+		map[string]map[string]string{
+			"owner": {
+				"name":         "John Doe",
+				"organization": "Acme Widgets Inc.",
+			},
+			"database": {
+				"file":   "payroll.dat",
+				"port":   "143",
+				"server": "129.0.2.62",
+			},
+		},
+	}
+	actual := parser.GetSections()
+
+	expected := map[string]map[string]string{
+		"database": {
+			"file":   "payroll.dat",
+			"port":   "143",
+			"server": "129.0.2.62",
+		},
 		"owner": {
 			"name":         "John Doe",
 			"organization": "Acme Widgets Inc.",
 		},
-		"database": {
-			"file":   "payroll.dat",
-			"port":   "143",
-			"server": "129.0.2.62",
-		},
 	}
 
-	expected := map[string]map[string]string{
-		"database": {
-			"server": "129.0.2.62",
-			"port":   "143",
-			"file":   "payroll.dat",
-		},
-	}
-
-	actual, err := getSections("database", nested)
-
-	if err != nil {
+	if !compareMapMap(actual, expected) {
 		t.Error(fmt.Sprintf("Expected '%v', Actual '%v'", expected, actual))
 	}
 }
 
-func setTest(t *testing.T) {
-	//map[file:payroll.dat port:500 server:192.0.2.62]
-	//set("database", "port", "500", x)
-	nested := map[string]map[string]string{
-		"owner": {
-			"name":         "John Doe",
-			"organization": "Acme Widgets Inc.",
-		},
-		"database": {
-			"file":   "payroll.dat",
-			"port":   "143",
-			"server": "129.0.2.62",
+func TestSet(t *testing.T) {
+	parser := dataStructue{
+		map[string]map[string]string{
+			"owner": {
+				"name":         "John Doe",
+				"organization": "Acme Widgets Inc.",
+			},
+			"database": {
+				"file":   "payroll.dat",
+				"port":   "143",
+				"server": "192.0.2.62",
+			},
 		},
 	}
 
@@ -72,7 +97,7 @@ func setTest(t *testing.T) {
 		"server": "192.0.2.62",
 	}
 
-	actual := set("database", "port", "500", nested)
+	actual := parser.Set("database", "port", "500")
 
 	if !compareMap(actual, expected) {
 		t.Error(fmt.Sprintf("Expected '%v', Actual '%v'", expected, actual))
@@ -80,7 +105,21 @@ func setTest(t *testing.T) {
 
 }
 
-func getKeysTest(t *testing.T) {
+func TestGetKeys(t *testing.T) {
+
+	parser := dataStructue{
+		map[string]map[string]string{
+			"owner": {
+				"name":         "John Doe",
+				"organization": "Acme Widgets Inc.",
+			},
+			"database": {
+				"file":   "payroll.dat",
+				"port":   "143",
+				"server": "192.0.2.62",
+			},
+		},
+	}
 
 	expected := map[string]string{
 		"server": "192.0.2.62",
@@ -88,19 +127,7 @@ func getKeysTest(t *testing.T) {
 		"file":   "payroll.dat",
 	}
 
-	nested := map[string]map[string]string{
-		"owner": {
-			"name":         "John Doe",
-			"organization": "Acme Widgets Inc.",
-		},
-		"database": {
-			"file":   "payroll.dat",
-			"port":   "143",
-			"server": "129.0.2.62",
-		},
-	}
-
-	err := getKeys("database", nested)
+	err := parser.GetKeys("database")
 
 	if err != nil {
 		t.Error(fmt.Sprintf("Expected '%v' ", expected))
