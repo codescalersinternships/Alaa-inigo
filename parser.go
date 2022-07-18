@@ -99,7 +99,7 @@ func main() {
 	fmt.Println(set("database", "port", "500", x)) //update value of key
 	fmt.Println("\n")
 
-	//getSectionsName(x)
+	getSectionsName(x)
 	//temp map[string]map[string]string
 	//temp = parseIni("PHP.ini")
 	//fmt.Println(getSection("owner", temp))
