@@ -84,20 +84,20 @@ func getKeys(sectionName string, MAP3 map[string]map[string]string) error {
 func main() {
 	var x = map[string]map[string]string{}
 	fmt.Println(parseInI("PHP.ini")) //return all sections with their keys
-	fmt.Println("\n")
+	//fmt.Println("\n")
 
 	x, _ = parseInI("PHP.ini")
 	fmt.Println(x)
-	fmt.Println("\n")
+	//fmt.Println("\n")
 
 	fmt.Println(getSections("database", x)) //return specific section with its keys
-	fmt.Println("\n")
+	//fmt.Println("\n")
 
 	getKeys("database", x)
-	fmt.Println("\n")
+	//fmt.Println("\n")
 
 	fmt.Println(set("database", "port", "500", x)) //update value of key
-	fmt.Println("\n")
+	//fmt.Println("\n")
 
 	getSectionsName(x)
 	//temp map[string]map[string]string
