@@ -19,24 +19,24 @@ func (parser *Parser) LoadFromFile(path string) (err error) {
 	content, err := ioutil.ReadFile(path)
 	msg := string(content)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	parser.nested_map, err = Parse_ini(msg)
+	parser.nested_map, err = Parseini(msg)
 	return err
 }
 
 func (parser *Parser) LoadFromText(txt string) (err error) {
 	if len(txt) != 0 {
-		parser.nested_map, err = Parse_ini(txt)
+		parser.nested_map, err = Parseini(txt)
 	} else {
-		panic(err)
+		return err
 	}
 
 	return err
 
 }
 
-func Parse_ini(txt string) (map[string]map[string]string, error) {
+func Parseini(txt string) (map[string]map[string]string, error) {
 	ini := make(map[string]map[string]string)
 	var head string
 

@@ -12,7 +12,7 @@ func TestParseIni(t *testing.T) {
 		"\n" + "[database]\n" + "; use IP address in case network name resolution is not working\n" +
 		"server = 192.0.2.62\n" + "port = 143\n" + "file = payroll.dat\n"
 
-	actual, err := Parse_ini(text)
+	actual, err := Parseini(text)
 
 	if err != nil {
 		t.Error(fmt.Sprintf("Error in parsing: '%v'", err))
