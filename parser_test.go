@@ -12,7 +12,7 @@ func TestParseIni(t *testing.T) {
 		"\n" + "[database]\n" + "; use IP address in case network name resolution is not working\n" +
 		"server = 192.0.2.62\n" + "port = 143\n" + "file = payroll.dat\n"
 
-	actual, err := Parseini(text)
+	actual, err := Parse(text)
 
 	if err != nil {
 		t.Error(fmt.Sprintf("Error in parsing: '%v'", err))
@@ -38,7 +38,7 @@ func TestParseIni(t *testing.T) {
 func TestCheckLine(t *testing.T) {
 	t.Run("section syntax", func(t *testing.T) {
 		line := "[database]"
-		actual, _ := CheckLine(line)
+		actual, _ := checkLine(line)
 		expected := "section"
 
 		if actual != expected {
@@ -49,7 +49,7 @@ func TestCheckLine(t *testing.T) {
 
 	t.Run("comment syntax", func(t *testing.T) {
 		line := "; last modified 1 April 2001 by John Doe"
-		actual, _ := CheckLine(line)
+		actual, _ := checkLine(line)
 		expected := "comment"
 
 		if actual != expected {
@@ -60,7 +60,7 @@ func TestCheckLine(t *testing.T) {
 
 	t.Run("empty line", func(t *testing.T) {
 		line := "\n"
-		actual, _ := CheckLine(line)
+		actual, _ := checkLine(line)
 		expected := "empty line"
 
 		if actual != expected {
@@ -71,7 +71,7 @@ func TestCheckLine(t *testing.T) {
 
 	t.Run("key line", func(t *testing.T) {
 		line := "name = John Doe"
-		actual, _ := CheckLine(line)
+		actual, _ := checkLine(line)
 		expected := "key line"
 
 		if actual != expected {
@@ -166,10 +166,10 @@ func TestGetKeys(t *testing.T) {
 		"file":   "payroll.dat",
 	}
 
-	err := parser.GetKeys("database")
+	keys, err := parser.GetKeys("database")
 
 	if err != nil {
-		t.Error(fmt.Sprintf("Expected '%v' ", expected))
+		t.Error(fmt.Sprintf("Expected %v, Actual %v ", expected, keys))
 	}
 
 }
