@@ -135,13 +135,3 @@ func (parser *Parser) SaveToFile() (err error) {
 	file.WriteString(data)
 	return err
 }
-
-func main() {
-	parser := Parser{}
-	parser.LoadFromFile("/home/aya/codescalers/parser_ini/PHP.ini")
-	fmt.Println(parser.GetSections())
-	fmt.Println(parser.GetSectionsName())
-	fmt.Println(parser.GetKeys("database"))
-	fmt.Println(parser.Get("owner", "name"))
-	parser.SaveToFile()
-}
