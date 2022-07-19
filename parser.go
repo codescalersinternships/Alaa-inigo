@@ -15,6 +15,20 @@ type Parser struct { //nested maps
 	nested_map map[string]map[string]string
 }
 
+func CheckLine(line string) (string, error) {
+	if line[0] == '[' && line[len(line)-1] == ']' {
+		return "section", nil
+	} else if line[0] == ';' {
+		return "comment", nil
+	} else if line[0] == '\n' {
+		return "empty line", nil
+	} else if strings.Contains(line, "=") && strings.Count(line, "=") == 1 {
+		return "key line", nil
+	} else {
+		return "", errors.New("Syntax Error !")
+	}
+}
+
 func (parser *Parser) LoadFromFile(path string) (err error) {
 	content, err := ioutil.ReadFile(path)
 	msg := string(content)
@@ -46,6 +60,7 @@ func Parseini(txt string) (map[string]map[string]string, error) {
 
 	for {
 		line, _ := reader.ReadString('\n')
+
 		result := sectionHead.FindStringSubmatch(line)
 		if len(result) > 0 {
 			head = result[1]
@@ -139,5 +154,7 @@ func main() {
 	parser.GetKeys("database")
 
 	parser.LoadToFile()
+
+	//fmt.Println(CheckLine("[user]"))
 
 }

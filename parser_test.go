@@ -25,9 +25,61 @@ func TestParseIni(t *testing.T) {
 	expected["database"]["server"] = "192.0.2.62"
 	expected["database"]["port"] = "143"
 	expected["database"]["file"] = "payroll.dat"
-	if !compareMapMap(actual, expected) {
-		t.Error(fmt.Sprintf("Expected : '%v', Actual : '%v'", expected, actual))
-	}
+
+	t.Run("Parse text to map", func(t *testing.T) {
+		if !compareMapMap(actual, expected) {
+			t.Errorf(fmt.Sprintf("Expected : '%v', Actual : '%v'", expected, actual))
+		}
+
+	})
+
+}
+
+func TestCheckLine(t *testing.T) {
+	t.Run("section syntax", func(t *testing.T) {
+		line := "[database]"
+		actual, _ := CheckLine(line)
+		expected := "section"
+
+		if actual != expected {
+			t.Errorf("Expexted: %q , Actual: %q", expected, actual)
+		}
+
+	})
+
+	t.Run("comment syntax", func(t *testing.T) {
+		line := "; last modified 1 April 2001 by John Doe"
+		actual, _ := CheckLine(line)
+		expected := "comment"
+
+		if actual != expected {
+			t.Errorf("Expexted: %q , Actual: %q", expected, actual)
+		}
+
+	})
+
+	t.Run("empty line", func(t *testing.T) {
+		line := "\n"
+		actual, _ := CheckLine(line)
+		expected := "empty line"
+
+		if actual != expected {
+			t.Errorf("Expexted: %q , Actual: %q", expected, actual)
+		}
+
+	})
+
+	t.Run("key line", func(t *testing.T) {
+		line := "name = John Doe"
+		actual, _ := CheckLine(line)
+		expected := "key line"
+
+		if actual != expected {
+			t.Errorf("Expexted: %q , Actual: %q", expected, actual)
+		}
+
+	})
+
 }
 
 func TestGetSections(t *testing.T) {
