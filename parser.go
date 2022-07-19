@@ -61,10 +61,7 @@ func Parse(txt string) (map[string]map[string]string, error) {
 
 	for {
 		line, _ := reader.ReadString('\n')
-
 		result := sectionHead.FindStringSubmatch(line)
-		//fmt.Println("Hello")
-		//fmt.Println(result)
 		if len(result) > 0 {
 			head = result[1]
 			ini[head] = make(map[string]string)
@@ -81,33 +78,25 @@ func Parse(txt string) (map[string]map[string]string, error) {
 			break
 		}
 	}
-	//fmt.Println(ini)
 	return ini, nil
-
 }
 
 func (parser *Parser) GetSections() map[string]map[string]string {
 	return parser.nested_map
-
 }
 
 func (parser *Parser) GetSectionsName() []string {
-
 	names := []string{}
 	for name, _ := range parser.nested_map {
 		names = append(names, name)
 	}
 	return names
-
 }
 
 func (parser *Parser) Set(name string, key string, value string) map[string]string { //ToDo
-
-	section, err := parser.nested_map[name]
-	if err {
-
-	}
+	section := parser.nested_map[name]
 	section[key] = value
+	fmt.Println(section)
 	return section
 }
 
@@ -118,49 +107,45 @@ func (parser *Parser) GetKeys(sectionName string) ([]string, error) {
 		for key, value := range section {
 			keys = append(keys, key+":"+value)
 		}
-
 	} else {
 		return nil, errors.New("No Section with that name !!")
 	}
 	return keys, nil
+}
 
+func (parser *Parser) Get(sectionName string, key string) string {
+	section := parser.nested_map[sectionName]
+	for keys, value := range section {
+		if keys == key {
+			return value
+		}
+	}
+	return ""
 }
 
 func (parser *Parser) SaveToFile() (err error) {
 	file, err := os.Create("output.ini")
 	file.Close()
-
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	data := ""
 	for section, keys := range parser.nested_map {
 		data += "[" + section + "]\n"
 		for key, value := range keys {
 			data += key + " = " + value + "\n"
 		}
-
 	}
-
 	file.WriteString(data)
-
 	return err
-
 }
 
 func main() {
-
 	parser := Parser{}
 	parser.LoadFromFile("/home/aya/codescalers/parser_ini/PHP.ini")
 	fmt.Println(parser.GetSections())
 	fmt.Println(parser.GetSectionsName())
-	fmt.Println(parser.Set("owner", "name", "alaa"))
-
-	//parser.Set("owner", "kk", "andrew")
-	//parser.Set("alaa", "aa", "bbb") --> wrong
-
 	fmt.Println(parser.GetKeys("database"))
+	fmt.Println(parser.Get("owner", "name"))
 	parser.SaveToFile()
-
 }
