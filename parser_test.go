@@ -6,19 +6,6 @@ import (
 )
 
 func TestParseIni(t *testing.T) {
-	// parser := dataStructue{
-	// 	map[string]map[string]string{
-	// 		"owner": {
-	// 			"name":         "John Doe",
-	// 			"organization": "Acme Widgets Inc.",
-	// 		},
-	// 		"database": {
-	// 			"file":   "payroll.dat",
-	// 			"port":   "143",
-	// 			"server": "129.0.2.62",
-	// 		},
-	// 	},
-	// }
 
 	text := "; last modified 1 April 2001 by John Doe\n" +
 		"[owner]\n" + "name = John Doe\n" + "organization = Acme Widgets Inc.\n" +
