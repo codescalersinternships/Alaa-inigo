@@ -114,13 +114,9 @@ func (parser *Parser) GetKeys(sectionName string) ([]string, error) {
 }
 
 func (parser *Parser) Get(sectionName string, key string) string {
-	section := parser.nested_map[sectionName]
-	for keys, value := range section {
-		if keys == key {
-			return value
-		}
-	}
-	return ""
+	section := parser.nested_map[sectionName][key]
+	return section
+
 }
 
 func (parser *Parser) SaveToFile() (err error) {
