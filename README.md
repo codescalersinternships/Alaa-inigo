@@ -6,7 +6,6 @@ INI Parser for GO.
 * **A property: key = value**
 * **Blank. The line will be ignored.**
 <br> 
-
 ### Features: 
   **1. Read INI file and extract all information.**
   **2. Get specific section with its keys.<br/>**
